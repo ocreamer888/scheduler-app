@@ -5,6 +5,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import CalendarView from './CalendarView';
 import BookingForm from './BookingForm';
+import Image from 'next/image';
 
 function Scheduler() {
   const [user, setUser] = useState<any>(null);
@@ -95,18 +96,22 @@ function Scheduler() {
   };
 
   if (!user) {
-    return (<div className="text-center"><h1 className="text-4xl font-bold text-gray-800 mb-4">Agenda una llamada</h1><p className="text-lg text-gray-600 mb-8">Usa tu cuenta de Google para ver los horarios disponibles.</p><button onClick={() => login()} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Iniciar Sesión con Google</button></div>);
+    return (<div className="text-center bg-gray-700/80 backdrop-blur-lg shadow-lg p-12 rounded-3xl flex flex-col items-center justify-center">
+      <Image src="/MedDeFi logotype for dark.svg" alt="MedDeFi" width={100} height={100} className="mb-8" />
+      <h1 className="text-4xl font-bold text-white mb-4">Agenda una llamada</h1>
+      <p className="text-lg text-gray-100 mb-8">Usa tu cuenta de Google para ver los horarios disponibles.</p>
+      <button onClick={() => login()} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 mb-4">Iniciar Sesión con Google</button>
+      </div>);
   }
 
   return (
-    <div className="text-center w-full relative">
-      <div className="absolute top-0 right-0 flex items-center space-x-2">
-        <p className="text-xs text-gray-500 hidden sm:block">{profile?.email}</p>
-        <button onClick={logout} className="text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-200 px-3 py-1 rounded-md">Cerrar Sesión</button>
-      </div>
+    <div className="text-center bg-gray-700/80 backdrop-blur-lg shadow-lg p-12 rounded-3xl flex flex-col items-center justify-center">
       
       {bookingConfirmed ? (
-        <div className="text-center"><h2 className="text-2xl font-bold text-green-600">¡Cita Agendada!</h2><p>Tú y tu invitado recibirán una confirmación por correo.</p><button onClick={resetState} className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Agendar otra cita</button></div>
+        <div className="text-center"><h2 className="text-2xl font-bold text-gray-100">¡Cita Agendada!</h2>
+        <p className='text-gray-100 my-4'>Recibirás una confirmación por correo. </p>
+        <button onClick={resetState} className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700">Agendar otra cita</button>
+        </div>
       ) : selectedSlot ? (
         <BookingForm selectedSlot={selectedSlot} onFormSubmit={createCalendarEvent} duration={scheduleData.eventType.duration} onCancel={() => setSelectedSlot(null)} />
       ) : scheduleData ? (
@@ -118,9 +123,9 @@ function Scheduler() {
         />
       ) : (
         <div className='flex flex-col items-center w-full'>
-          <p className='text-green-600 font-semibold'>¡Sesión iniciada como {profile?.name}!</p>
-          <p className='text-gray-600 my-4'>Haz clic para cargar tu disponibilidad</p>
-          <button onClick={getBusyTimes} className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700">Cargar mis horarios disponibles</button>
+          <p className='text-gray-100 text-3xl font-semibold'>¡Sesión iniciada como {profile?.name}!</p>
+          <p className='text-gray-100 my-4'>Haz clic para cargar tu disponibilidad</p>
+          <button onClick={getBusyTimes} className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700">Cargar mis horarios disponibles</button>
         </div>
       )}
     </div>

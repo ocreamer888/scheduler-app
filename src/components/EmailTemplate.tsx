@@ -1,6 +1,5 @@
 // src/components/EmailTemplate.tsx
 import * as React from 'react';
-import Image from 'next/image';
 
 interface EmailTemplateProps {
   guestName: string;

@@ -90,8 +90,8 @@ export default function CalendarView({ busyTimes, eventType, availability, onSlo
             onClick={() => setSelectedDate(day)}
             className={`p-2 rounded-lg text-center ${
               isEqual(day, selectedDate)
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 hover:bg-gray-300'
+                ? 'bg-blue-100/50 text-white'
+                : 'bg-gray-900/20 hover:bg-blue-900/20'
             }`}
           >
             <p className="font-semibold">{format(day, 'E')}</p>
@@ -103,7 +103,7 @@ export default function CalendarView({ busyTimes, eventType, availability, onSlo
       <h3 className="text-xl font-bold text-center mb-4">
         Horarios disponibles para {format(selectedDate, 'EEEE, d \'de\' MMMM')}
       </h3>
-      <p className="text-center text-sm text-gray-500 mb-4">
+      <p className="text-center text-sm text-gray-100 mb-4">
         Zona horaria: {userTimeZone}
       </p>
       <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
@@ -112,7 +112,7 @@ export default function CalendarView({ busyTimes, eventType, availability, onSlo
             <button
               key={slot.toString()}
               onClick={() => onSlotSelect(slot)}
-              className="p-3 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              className="p-3 bg-gray-500 text-gray-100 rounded-lg hover:bg-blue-500"
             >
               {format(slot, 'HH:mm')}
             </button>
