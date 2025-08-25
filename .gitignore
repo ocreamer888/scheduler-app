@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+.next/cache/
+.next/static/
+.next/trace/
+
+# Build artifacts
+dist/
+
+# Env files
+.env
+.env*.local
+
+# Tooling
+.vercel/
+.DS_Store
