@@ -90,8 +90,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: 'Evento creado y guardado', data: calendarResponse.data });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error en /api/book:', error);
-    return NextResponse.json({ error: 'Failed to create event', details: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: 'Failed to create event', details: errorMessage }, { status: 500 });
   }
 }

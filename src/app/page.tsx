@@ -1,17 +1,33 @@
 'use client';
 
-import { GoogleOAuthProvider, useGoogleLogin, googleLogout } from '@react-oauth/google';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import axios from 'axios';
 import CalendarView from './CalendarView';
 import BookingForm from './BookingForm';
 import Image from 'next/image';
 
+interface GoogleUser {
+  access_token: string;
+}
+
+interface GoogleProfile {
+  name: string;
+  email: string;
+  picture?: string;
+}
+
+interface ScheduleData {
+  busy: Array<{ start: string; end: string }>;
+  eventType: { duration: number; buffer_time: number };
+  availability: Array<{ day_of_week: number; start_time: string; end_time: string }>;
+}
+
 function Scheduler() {
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [user, setUser] = useState<GoogleUser | null>(null);
+  const [profile, setProfile] = useState<GoogleProfile | null>(null);
   // Nuevo estado para guardar toda la configuración de la BD
-  const [scheduleData, setScheduleData] = useState<any>(null);
+  const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
@@ -32,15 +48,6 @@ function Scheduler() {
     scope: 'https://www.googleapis.com/auth/calendar',
   });
 
-  const logout = () => {
-    googleLogout();
-    setUser(null);
-    setProfile(null);
-    setScheduleData(null); // Limpiamos el nuevo estado
-    setSelectedSlot(null);
-    setBookingConfirmed(false);
-  };
-
   const getBusyTimes = async () => {
     if (!user) {
       alert('Debes iniciar sesión primero');
@@ -52,9 +59,10 @@ function Scheduler() {
         accessToken: user.access_token,
       });
       setScheduleData(response.data); // Guardamos toda la respuesta
-    } catch (error: any) {
-      const backendDetails = error?.response?.data?.details || error?.message || 'Error desconocido';
-      console.error('Error al obtener los horarios desde nuestro backend:', error?.response?.data || error);
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { details?: string } }; message?: string };
+      const backendDetails = axiosError?.response?.data?.details || axiosError?.message || 'Error desconocido';
+      console.error('Error al obtener los horarios desde nuestro backend:', axiosError?.response?.data || error);
       alert(`Hubo un error al consultar la disponibilidad: ${backendDetails}`);
     }
   };
@@ -77,9 +85,10 @@ function Scheduler() {
       console.log("✅ Respuesta de nuestro backend (/api/book):", response.data);
       setBookingConfirmed(true);
 
-    } catch (error: any) {
-      const errorDetails = error.response?.data?.details || 'Error desconocido';
-      console.error(`Error al crear el evento via backend: ${errorDetails}`, error.response?.data);
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { details?: string } } };
+      const errorDetails = axiosError?.response?.data?.details || 'Error desconocido';
+      console.error(`Error al crear el evento via backend: ${errorDetails}`, axiosError?.response?.data);
       alert(`Hubo un error al crear el evento: ${errorDetails}`);
     }
   };
@@ -112,7 +121,7 @@ function Scheduler() {
         <p className='text-gray-100 my-4'>Recibirás una confirmación por correo. </p>
         <button onClick={resetState} className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700">Agendar otra cita</button>
         </div>
-      ) : selectedSlot ? (
+      ) : selectedSlot && scheduleData ? (
         <BookingForm selectedSlot={selectedSlot} onFormSubmit={createCalendarEvent} duration={scheduleData.eventType.duration} onCancel={() => setSelectedSlot(null)} />
       ) : scheduleData ? (
         <CalendarView 

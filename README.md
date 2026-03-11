@@ -66,11 +66,19 @@ RESEND_API_KEY=your_resend_api_key
 
 # App URL (used for cancellation link generation)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# API key management (v1): authorizes admin actions for /api/v1/auth/generate-key and keys CRUD
+ADMIN_SECRET=your_admin_secret
+
+# Public API proxy: used by /api/public/availability and /api/public/book to call the v1 API internally
+SCHEDULER_API_KEY=your_scheduler_api_key
 ```
 
 Notes:
 - The Service Role key must never be exposed to the browser; it’s used server-side only in API routes.
 - Add production values in your hosting provider’s dashboard (e.g., Vercel Project Settings).
+- `ADMIN_SECRET` is sent as `X-Admin-Secret` to create/list/update/delete API keys; keep it server-side only.
+- `SCHEDULER_API_KEY` is used when the app calls its own v1 API from the public proxy routes; do not expose it to the client.
 
 ## Database Schema (Supabase)
 
@@ -139,6 +147,7 @@ RLS:
    - Your production domain
 3. Enable the Google Calendar API for your project.
 4. The app requests the `https://www.googleapis.com/auth/calendar` scope.
+5. **If you see "403 access_denied"**: The OAuth consent screen is in **Testing** mode. Only accounts listed as **Test users** can sign in. In [Google Cloud Console](https://console.cloud.google.com/) → **APIs & Services** → **OAuth consent screen**, add your Google account (and any other users who need access) under **Test users**. For production, you can publish the app (verification may be required for sensitive scopes like Calendar).
 
 ## Getting Started
 

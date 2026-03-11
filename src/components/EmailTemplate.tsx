@@ -211,7 +211,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                       textAlign: 'center',
                     }}
                   >
-                    © {new Date().getFullYear()} MedDeFi. Todos los derechos reservados.
+                    © {new Date().getFullYear()} OcreamerStudio. Todos los derechos reservados.
                   </td>
                 </tr>
               </tbody>
